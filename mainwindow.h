@@ -3,6 +3,7 @@
 
 #include "auth.h"
 #include "interactsql.h"
+#include "qboxlayout.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -28,7 +29,12 @@ private slots:
 
     void on_Library_Button_clicked();
 
+    void buy_Button();
+
+    void download_Button();
+
 private:
+    QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap;
     interactsql sql;
     bool isConnected=false;
     QSqlDatabase db;

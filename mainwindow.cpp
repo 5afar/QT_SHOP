@@ -76,6 +76,7 @@ void MainWindow::on_Shop_Button_clicked()
 
         QLabel* labelname = new QLabel();
         labelname->setText(q1.value(1).toString());
+        labelname->setObjectName("game");
         labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelname);
 
@@ -87,9 +88,12 @@ void MainWindow::on_Shop_Button_clicked()
         QString buttonText ="Buy";
         QPushButton* button = new QPushButton(buttonText,this);
         button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+        QObject::connect(
+                    button, &QPushButton::clicked,
+                    this, &MainWindow::buy_Button);
         layout->addWidget(button);
-
         lay->insertWidget(0,element);
+        mButtonToLayoutMap.insert(button,layout);
     }
     ui->widgets_frame1->addWidget(sc);
     lay->addStretch();
@@ -179,4 +183,22 @@ void MainWindow::on_Library_Button_clicked()
     db.close();
 }
 
+void MainWindow::buy_Button()
+{
+    QPushButton* button=qobject_cast<QPushButton*>(sender());
+    QHBoxLayout* layout=mButtonToLayoutMap.value(button);
+    if (layout){
+        QLabel *label=qobject_cast<QLabel*>(layout->itemAt(1)->widget());
+        if (label){
+            QString s=label->text();
+            QMessageBox::question(this,"buy","Вы хотите купить "+s+"?");
+        }
+    }
+
+}
+
+void MainWindow::download_Button()
+{
+
+}
 
