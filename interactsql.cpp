@@ -32,32 +32,34 @@ bool interactsql::get_isConnected()
 }
 bool interactsql::get_Auth(bool isAuth,QString l,QString p)
 {
-    db.open();
-    QSqlQuery q(QSqlDatabase::database("shop"));
-
-    if (q.exec("SELECT iduser, login, password FROM user WHERE login='"+l+"' AND password='"+p+"'"))
+    if (db.open())
     {
-        QString login;
-        QString password;
-        while (q.next())
+        QSqlQuery q(QSqlDatabase::database("shop"));
+
+        if (q.exec("SELECT iduser, login, password FROM user WHERE login='"+l+"' AND password='"+p+"'"))
         {
-            userID=q.value(0).toInt();
-            login = q.value(1).toString();
-            password = q.value(2).toString();
-            qDebug()<<login<<password;
+            QString login;
+            QString password;
+            while (q.next())
+            {
+                userID=q.value(0).toInt();
+                login = q.value(1).toString();
+                password = q.value(2).toString();
+                qDebug()<<login<<password;
+            }
+            if (login.isEmpty() or password.isEmpty())
+            {
+                isAuth=false;
+            }
+            else if(login==l and password==p)
+            {
+                isAuth=true;
+            }
         }
-        if (login.isEmpty() or password.isEmpty())
+        else
         {
             isAuth=false;
         }
-        else if(login==l and password==p)
-        {
-            isAuth=true;
-        }
-    }
-    else
-    {
-        isAuth=false;
     }
     return isAuth;
 }
