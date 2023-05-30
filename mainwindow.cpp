@@ -3,7 +3,6 @@
 #include "auth.h"
 #include "qlabel.h"
 #include "qsqlquery.h"
-#include "user.h"
 #include <QDialog>
 #include <QMessageBox>
 #include <QScrollArea>
@@ -19,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent)
     {
         this->setWindowFlag(Qt::FramelessWindowHint);
         this->show();
-        User user(a.get_id());
     }
     else
     {
@@ -49,6 +47,7 @@ void MainWindow::on_Exit_Button_clicked()
 void MainWindow::on_Shop_Button_clicked()
 {
     onRemoveWidget();
+
     db.open();
     QSqlQuery q1(QSqlDatabase::database("shop"));
     QSqlQuery q2(QSqlDatabase::database("shop"));
@@ -127,6 +126,8 @@ void MainWindow::onRemoveWidget()
 void MainWindow::on_Library_Button_clicked()
 {
     onRemoveWidget();
+
+
     db.open();
     QString id=QString::number(a.get_id());
     QSqlQuery q1(QSqlDatabase::database("shop"));
