@@ -35,6 +35,7 @@ private slots:
 
 private:
     QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap;
+    QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap2;
     interactsql sql;
     bool isConnected=false;
     QSqlDatabase db;

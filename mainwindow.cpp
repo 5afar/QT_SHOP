@@ -175,8 +175,12 @@ void MainWindow::on_Library_Button_clicked()
         QPushButton* button = new QPushButton(buttonText,this);
         button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(button);
+        QObject::connect(
+                    button, &QPushButton::clicked,
+                    this, &MainWindow::download_Button);
 
         lay->insertWidget(0,element);
+        mButtonToLayoutMap2.insert(button,layout);
     }
     ui->widgets_frame1->addWidget(sc);
     lay->addStretch();
@@ -199,6 +203,14 @@ void MainWindow::buy_Button()
 
 void MainWindow::download_Button()
 {
-
+    QPushButton* button=qobject_cast<QPushButton*>(sender());
+    QHBoxLayout* layout=mButtonToLayoutMap2.value(button);
+    if (layout){
+        QLabel *label=qobject_cast<QLabel*>(layout->itemAt(0)->widget());
+        if (label){
+            QString s=label->text();
+            QMessageBox::question(this,"buy","Вы хотите скачать "+s+"?");
+        }
+    }
 }
 
