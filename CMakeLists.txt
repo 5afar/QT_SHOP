@@ -24,6 +24,8 @@ set(PROJECT_SOURCES
         interactsql.h
         interactsql.cpp
         qrc.qrc
+        user.h
+        user.cpp
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Sql)

@@ -23,6 +23,12 @@ MainWindow::MainWindow(QWidget *parent)
     {
         this->close();
     }
+    db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("127.0.0.1");
+    db.setUserName("root");
+    db.setPassword("0712");
+    db.setDatabaseName("shop");
+    on_Shop_Button_clicked();
 }
 MainWindow::~MainWindow()
 {
@@ -41,11 +47,7 @@ void MainWindow::on_Exit_Button_clicked()
 void MainWindow::on_Shop_Button_clicked()
 {
     onRemoveWidget();
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("127.0.0.1");
-    db.setUserName("root");
-    db.setPassword("0712");
-    db.setDatabaseName("shop");
+
     db.open();
     QSqlQuery q1(QSqlDatabase::database("shop"));
     QSqlQuery q2(QSqlDatabase::database("shop"));
@@ -113,43 +115,19 @@ void MainWindow::onRemoveWidget()
     }
     while(true);
 ///////////// SSTEP 2
-
     if(ui->widgets_frame1->layout())
     {
         QLayoutItem* item;
         while((item= ui->widgets_frame1->layout()->takeAt(0))!=nullptr)
             delete item;
     }
-//QLayoutItem *item;
-//while((item=ui->widgets_frame1->layout()->takeAt(0))!=nullptr)
-//{
-//    delete item->widget();
-//    delete item;
-//}
-
-
-//    for(int i =0;i<listwidget.size();)
-//    {
-//        QWidget* widget=listwidget.at(0);
-//        ui->widgets_frame1->removeWidget(widget);
-//        if(!listwidget.isEmpty())
-//        {
-//            listwidget.removeFirst();
-//        }
-//        delete widget;
-//    }
-
 }
 
 void MainWindow::on_Library_Button_clicked()
 {
     onRemoveWidget();
 
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("127.0.0.1");
-    db.setUserName("root");
-    db.setPassword("0712");
-    db.setDatabaseName("shop");
+
     db.open();
     QString id=QString::number(a.get_id());
     QSqlQuery q1(QSqlDatabase::database("shop"));
