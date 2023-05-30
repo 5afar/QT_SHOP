@@ -4,6 +4,7 @@
 #include "auth.h"
 #include "interactsql.h"
 #include "qboxlayout.h"
+#include "user.h"
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -33,6 +34,8 @@ private slots:
 
     void download_Button();
 
+    void on_Profile_Button_clicked();
+
 private:
     QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap;
     QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap2;
@@ -43,6 +46,7 @@ private:
     bool isWorked = true;
     bool isFull=false;
     Auth a;
+    User user;
 
 
 

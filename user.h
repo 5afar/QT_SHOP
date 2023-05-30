@@ -7,7 +7,6 @@ class User
 {
 public:
     User();
-    User(int id);
     int GetIdUser();
     int GetIdProfile();
     QString GetName();
@@ -17,6 +16,7 @@ public:
     QString GetControlQuestion();
     QString GetControlAnswer();
     double GetWallet();
+    void TakeInfo(int id);
 private:
 
     QSqlDatabase db;

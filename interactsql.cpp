@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 
-
 interactsql::interactsql()
 {
     db = QSqlDatabase::addDatabase("QMYSQL");
@@ -16,15 +15,16 @@ interactsql::interactsql()
     if(db.open())
     {
         isConnected=true;
+        qDebug()<<isConnected;
     }
     else
     {
         isConnected=false;
+        qDebug()<<isConnected;
     }
 }
 interactsql::~interactsql()
 {
-    db.close();
 }
 bool interactsql::get_isConnected()
 {
@@ -32,31 +32,34 @@ bool interactsql::get_isConnected()
 }
 bool interactsql::get_Auth(bool isAuth,QString l,QString p)
 {
-    QSqlQuery q(QSqlDatabase::database("shop"));
-
-    if (q.exec("SELECT iduser, login, password FROM user WHERE login='"+l+"' AND password='"+p+"'"))
+    if (db.open())
     {
-        QString login;
-        QString password;
-        while (q.next())
+        QSqlQuery q(QSqlDatabase::database("shop"));
+
+        if (q.exec("SELECT iduser, login, password FROM user WHERE login='"+l+"' AND password='"+p+"'"))
         {
-            userID=q.value(0).toInt();
-            login = q.value(1).toString();
-            password = q.value(2).toString();
-            qDebug()<<login<<password;
-        }
-        if(login==l and password==p)
-        {
-            isAuth=true;
+            QString login;
+            QString password;
+            while (q.next())
+            {
+                userID=q.value(0).toInt();
+                login = q.value(1).toString();
+                password = q.value(2).toString();
+                qDebug()<<login<<password;
+            }
+            if (login.isEmpty() or password.isEmpty())
+            {
+                isAuth=false;
+            }
+            else if(login==l and password==p)
+            {
+                isAuth=true;
+            }
         }
         else
         {
             isAuth=false;
         }
-    }
-    else
-    {
-        isAuth=false;
     }
     return isAuth;
 }
