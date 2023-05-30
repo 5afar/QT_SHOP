@@ -9,9 +9,13 @@ User::User()
     db.setPassword("0712");
     db.setDatabaseName("shop");
 }
-
-void User::TakeInfo(int id)
+User::User(int id)
 {
+    db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName("127.0.0.1");
+    db.setUserName("root");
+    db.setPassword("0712");
+    db.setDatabaseName("shop");
     if (db.open())
     {
         QString q="SELECT * FROM profile WHERE iduser="+QString::number(id);
@@ -31,8 +35,11 @@ void User::TakeInfo(int id)
                 wallet=query.value(8).toDouble();
             }
         }
+        db.close();
     }
+
 }
+
 int User::GetIdUser()
 {
     return id_user;

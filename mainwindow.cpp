@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     {
         this->setWindowFlag(Qt::FramelessWindowHint);
         this->show();
-        user.TakeInfo(a.get_id());
+        User user(a.get_id());
     }
     else
     {
@@ -189,45 +189,5 @@ void MainWindow::download_Button()
             QMessageBox::question(this,"buy","Вы хотите скачать "+s+"?");
         }
     }
-}
-
-
-void MainWindow::on_Profile_Button_clicked()
-{
-    onRemoveWidget();
-    QWidget *wid=new QWidget;
-    QVBoxLayout* lay=new QVBoxLayout(wid);
-    QScrollArea *sc = new QScrollArea;
-    sc->setWidget(wid);
-    sc->setWidgetResizable(true);
-
-    QWidget *element= new QWidget ();
-    element->setFixedWidth(720);
-    QHBoxLayout* layout = new QHBoxLayout(element);
-
-    QLabel* labelname = new QLabel();
-    labelname->setText(user.GetName());
-    labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-    layout->addWidget(labelname);
-
-    QLabel* label_second_name = new QLabel();
-    labelname->setText(user.GetSecondName());
-    labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-    layout->addWidget(label_second_name);
-
-    QLabel* label_email = new QLabel();
-    labelname->setText(user.GetEmail());
-    labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-    layout->addWidget(label_email);
-
-    QLabel* labelCQ = new QLabel();
-    labelname->setText(user.GetControlQuestion());
-    labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-    layout->addWidget(labelCQ);
-
-    lay->insertWidget(0,element);
-    ui->widgets_frame1->addWidget(sc);
-    lay->addStretch();
-    db.close();
 }
 
