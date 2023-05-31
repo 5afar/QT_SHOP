@@ -28,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
     db.setUserName("root");
     db.setPassword("0712");
     db.setDatabaseName("shop");
+    User u (a.get_id());
+    user=u;
     on_Shop_Button_clicked();
 }
 MainWindow::~MainWindow()
@@ -190,5 +192,63 @@ void MainWindow::download_Button()
             QMessageBox::question(this,"buy","Вы хотите скачать "+s+"?");
         }
     }
+}
+
+
+void MainWindow::on_Profile_Button_clicked()
+{
+
+    onRemoveWidget();
+    QWidget *wid=new QWidget;
+    QVBoxLayout* lay=new QVBoxLayout(wid);
+    QScrollArea *sc = new QScrollArea;
+    sc->setWidget(wid);
+    sc->setWidgetResizable(true);
+
+    QWidget *element= new QWidget ();
+    element->setFixedWidth(720);
+    QVBoxLayout* layout = new QVBoxLayout(element);
+
+    QLabel* labelname = new QLabel();
+    labelname->setText(user.GetName());
+    labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(labelname);
+
+    QLabel* label_second_name = new QLabel();
+    label_second_name->setText(user.GetSecondName());
+    label_second_name->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(label_second_name);
+
+    QLabel* label_Date = new QLabel();
+    label_Date->setText(user.GetBirthday().toString());
+    label_Date->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(label_Date);
+
+    QLabel* label_email = new QLabel();
+    label_email->setText(user.GetEmail());
+    label_email->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(label_email);
+
+    QLabel* labelCQ = new QLabel();
+    labelCQ->setText(user.GetControlQuestion());
+    labelCQ->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(labelCQ);
+
+    QLabel* labelAN = new QLabel();
+    labelAN->setText(user.GetControlAnswer());
+    labelAN->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(labelAN);
+
+    QLabel* label_wallet = new QLabel();
+    label_wallet->setText(QString::number(user.GetWallet()));
+    label_wallet->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(label_wallet);
+
+    int index = lay->count();
+    lay->insertWidget(index,element);
+    ui->widgets_frame1->addWidget(sc);
+    lay->addStretch();
+
+
 }
 

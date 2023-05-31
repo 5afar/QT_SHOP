@@ -13,12 +13,11 @@ private:
 
 public:
     interactsql();
-    ~interactsql();
     int userID;
     bool get_isConnected();
     bool get_Auth(bool isAuth,QString l,QString p);
     int get_id();
-
+    QSqlQuery que(QString s);
 };
 
 #endif // INTERACTSQL_H

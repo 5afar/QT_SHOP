@@ -22,10 +22,7 @@ interactsql::interactsql()
         isConnected=false;
     }
 }
-interactsql::~interactsql()
-{
-    db.close();
-}
+
 bool interactsql::get_isConnected()
 {
     return isConnected ;
