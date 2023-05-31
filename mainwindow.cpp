@@ -23,11 +23,6 @@ MainWindow::MainWindow(QWidget *parent)
     {
         this->close();
     }
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("127.0.0.1");
-    db.setUserName("root");
-    db.setPassword("0712");
-    db.setDatabaseName("shop");
     User u (a.get_id());
     user=u;
     on_Shop_Button_clicked();
@@ -72,6 +67,7 @@ void MainWindow::on_Shop_Button_clicked()
         QHBoxLayout* layout = new QHBoxLayout(element);
 
         QLabel* labelimg = new QLabel();
+        labelimg->setObjectName("image");
         labelimg->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         QPixmap pic = QPixmap(q2.value(0).toString());
         QPixmap scaled = pic.scaled(QSize(640,360));

@@ -28,3 +28,36 @@ QPushButton:pressed {
   background-color: #FFF;
 }
 
+QLabel{
+font-family:System;
+font-size: 14px;
+text-align: center;
+padding: 3px;
+padding-left: 5px;
+padding-right: 5px;
+
+}
+
+Auth{
+margin: 3rem;
+width: 350px;
+height: 250px;
+background: #ccc;
+color: white;
+border: 1px solid;
+border-color: black;
+}
+MainWindow{
+margin: 3rem;
+width: 350px;
+height: 250px;
+background: #ccc;
+color: white;
+border: 1px solid;
+border-color: black;
+}
+QLabel#image{
+border-radius:50%;
+border: 5px solid #fff;
+box-shadow: 2px 1px 5px #999999;
+}

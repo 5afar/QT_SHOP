@@ -26,6 +26,7 @@ set(PROJECT_SOURCES
         qrc.qrc
         user.h
         user.cpp
+
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Sql)
