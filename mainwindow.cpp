@@ -165,6 +165,7 @@ void MainWindow::on_Library_Button_clicked()
 
 void MainWindow::buy_Button()
 {
+    onRemoveWidget();
     QPushButton* button=qobject_cast<QPushButton*>(sender());
     QHBoxLayout* layout=mButtonToLayoutMap.value(button);
     if (layout){
@@ -179,6 +180,7 @@ void MainWindow::buy_Button()
 
 void MainWindow::download_Button()
 {
+    onRemoveWidget();
     QPushButton* button=qobject_cast<QPushButton*>(sender());
     QHBoxLayout* layout=mButtonToLayoutMap2.value(button);
     if (layout){
