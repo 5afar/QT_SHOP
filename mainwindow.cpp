@@ -43,6 +43,7 @@ void MainWindow::on_Exit_Button_clicked()
 }
 void MainWindow::on_Shop_Button_clicked()
 {
+
     onRemoveWidget();
 
     db.open();
@@ -85,7 +86,7 @@ void MainWindow::on_Shop_Button_clicked()
         labelprice->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelprice);
 
-        QString buttonText ="Buy";
+        QString buttonText ="Купить";
         QPushButton* button = new QPushButton(buttonText,this);
         button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         QObject::connect(
@@ -146,7 +147,7 @@ void MainWindow::on_Library_Button_clicked()
         labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelname);
 
-        QString buttonText ="Download";
+        QString buttonText ="Скачать";
         QPushButton* button = new QPushButton(buttonText,this);
         button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(button);
@@ -165,75 +166,89 @@ void MainWindow::on_Library_Button_clicked()
 void MainWindow::buy_Button()
 {
     QPushButton* button=qobject_cast<QPushButton*>(sender());
-    QHBoxLayout* layout=mButtonToLayoutMap.value(button);
+    QHBoxLayout* layou=mButtonToLayoutMap.value(button);
     QMessageBox::StandardButton reply;
     QString s;
-    if (layout){
-        QLabel *label=qobject_cast<QLabel*>(layout->itemAt(1)->widget());
+    if (layou){
+        QLabel *label=qobject_cast<QLabel*>(layou->itemAt(1)->widget());
         if (label){
             s=label->text();
-            reply = QMessageBox::question(this,"buy","Вы хотите купить "+s+"?", QMessageBox::Yes|QMessageBox::No);
+//            reply = QMessageBox::question(this,"buy","Вы хотите купить "+s+"?", QMessageBox::Yes|QMessageBox::No);
         }
     }
 
-    if (reply==QMessageBox::Yes)
+    onRemoveWidget();
+    db.open();
+    QSqlQuery q1(QSqlDatabase::database("shop"));
+    QSqlQuery q2(QSqlDatabase::database("shop"));
+    q1.exec("SELECT * FROM content WHERE name='"+s+"'");
+
+    QWidget *wid=new QWidget;
+    QVBoxLayout* lay=new QVBoxLayout(wid);
+    QScrollArea *sc = new QScrollArea;
+    sc->setWidget(wid);
+    sc->setWidgetResizable(true);
+    QString idcontent;
+    QWidget *element= new QWidget ();
+    QHBoxLayout* layout = new QHBoxLayout(element);
+    while(q1.next())
     {
-        onRemoveWidget();
-        db.open();
-        QSqlQuery q1(QSqlDatabase::database("shop"));
-        QSqlQuery q2(QSqlDatabase::database("shop"));
-        q1.exec("SELECT * FROM content WHERE name='"+s+"'");
-
-        QWidget *wid=new QWidget;
-        QVBoxLayout* lay=new QVBoxLayout(wid);
-        QScrollArea *sc = new QScrollArea;
-        sc->setWidget(wid);
-        sc->setWidgetResizable(true);
-        QString idcontent;
-        QWidget *element= new QWidget ();
-        QHBoxLayout* layout = new QHBoxLayout(element);
-
-        while(q1.next())
+        idcontent=q1.value(0).toString();
+        q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'");
+        while(q2.next())
         {
-            idcontent=q1.value(0).toString();
-            q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'");
-            while(q2.next())
-            {
-                QLabel* labelimg = new QLabel();
-                labelimg->setObjectName("image");
-                labelimg->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-                QPixmap pic = QPixmap(q2.value(0).toString());
-                QPixmap scaled = pic.scaled(720,405,Qt::KeepAspectRatio);
-                labelimg->setFixedWidth(720);
-                labelimg->setPixmap(scaled);
-                layout->addWidget(labelimg);
-            }
-            QLabel* labelname = new QLabel();
-            labelname->setText("Название: "+q1.value(1).toString());
-            labelname->setObjectName("game");
-            labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-            lay->addWidget(labelname);
-
-            QLabel* labelprice = new QLabel();
-            labelprice->setText("Цена: "+q1.value(2).toString()+"руб.");
-            labelprice->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-            lay->addWidget(labelprice);
-
-            QLabel* labelwallet = new QLabel();
-            labelwallet->setText("Ваш баланс: "+QString::number(user.GetWallet())+"руб.");
-            labelwallet->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-            lay->addWidget(labelwallet);
-
+            QLabel* labelimg = new QLabel();
+            labelimg->setObjectName("image");
+            labelimg->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+            QPixmap pic = QPixmap(q2.value(0).toString());
+            QPixmap scaled = pic.scaled(720,405,Qt::KeepAspectRatio);
+            labelimg->setFixedWidth(720);
+            labelimg->setPixmap(scaled);
+            layout->addWidget(labelimg);
         }
+        QLabel* labelname = new QLabel();
+        labelname->setText("Название: "+q1.value(1).toString());
+        labelname->setObjectName("game");
+        labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+        lay->addWidget(labelname);
+        temp=(labelname->text());
 
+        QLabel* labelprice = new QLabel();
+        labelprice->setText("Цена: "+q1.value(2).toString()+"руб.");
+        labelprice->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+        lay->addWidget(labelprice);
 
-        lay->addWidget(element);
-        ui->widgets_frame1->addWidget(sc);
-        lay->addStretch();
-        db.close();
+        QLabel* labelwallet = new QLabel();
+        labelwallet->setText("Ваш баланс: "+QString::number(user.GetWallet())+"руб.");
+        labelwallet->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+        lay->addWidget(labelwallet);
+
+        QString buttonText ="Оплатить";
+        QPushButton* button = new QPushButton(buttonText,this);
+        button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+        lay->addWidget(button);
+        QObject::connect(button,&QPushButton::clicked, this, &MainWindow::payment_Button);
     }
+
+    lay->addWidget(element);
+    ui->widgets_frame1->addWidget(sc);
+    lay->addStretch();
+    db.close();
+
 }
 
+void MainWindow::payment_Button()
+{
+
+        QMessageBox::information(this,"q",temp);
+//    db.open();
+//    QSqlQuery q1(QSqlDatabase::database("shop"));
+//    q1.exec("SELECT price FROM content WHERE name='"+s+"'");
+//    q1.next();
+//    double price=q1.value(0).toDouble();
+//    user.SetWallet(user.GetWallet()-price);
+
+}
 void MainWindow::download_Button()
 {
     onRemoveWidget();
