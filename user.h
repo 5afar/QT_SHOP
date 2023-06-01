@@ -18,6 +18,8 @@ public:
     QString GetControlQuestion();
     QString GetControlAnswer();
     double GetWallet();
+    void SyncData();
+    void SetWallet(double d);
 private:
     int id_user;
     int id_profile;

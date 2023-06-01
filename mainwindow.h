@@ -31,7 +31,7 @@ private slots:
     void on_Library_Button_clicked();
 
     void buy_Button();
-
+    void payment_Button();
     void download_Button();
 
     void on_Profile_Button_clicked();
@@ -47,6 +47,7 @@ private:
     bool isFull=false;
     Auth a;
     User user;
+    QString temp;
 
 
 };

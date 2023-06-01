@@ -42,7 +42,7 @@ bool interactsql::get_Auth(bool isAuth,QString l,QString p)
             password = q.value(2).toString();
             qDebug()<<login<<password;
         }
-        if(login==l and password==p)
+        if(login==l and password==p and !l.isEmpty())
         {
             isAuth=true;
         }
