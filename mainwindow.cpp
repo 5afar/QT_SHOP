@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 MainWindow::~MainWindow()
 {
+
     isWorked = false;
     delete ui;
 }
@@ -167,16 +168,15 @@ void MainWindow::buy_Button()
 {
     QPushButton* button=qobject_cast<QPushButton*>(sender());
     QHBoxLayout* layou=mButtonToLayoutMap.value(button);
-    QMessageBox::StandardButton reply;
+
     QString s;
     if (layou){
         QLabel *label=qobject_cast<QLabel*>(layou->itemAt(1)->widget());
         if (label){
             s=label->text();
-//            reply = QMessageBox::question(this,"buy","Вы хотите купить "+s+"?", QMessageBox::Yes|QMessageBox::No);
         }
     }
-
+    temp=s;
     onRemoveWidget();
     db.open();
     QSqlQuery q1(QSqlDatabase::database("shop"));
@@ -211,7 +211,7 @@ void MainWindow::buy_Button()
         labelname->setObjectName("game");
         labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         lay->addWidget(labelname);
-        temp=(labelname->text());
+
 
         QLabel* labelprice = new QLabel();
         labelprice->setText("Цена: "+q1.value(2).toString()+"руб.");
@@ -239,15 +239,41 @@ void MainWindow::buy_Button()
 
 void MainWindow::payment_Button()
 {
-
-        QMessageBox::information(this,"q",temp);
-//    db.open();
-//    QSqlQuery q1(QSqlDatabase::database("shop"));
-//    q1.exec("SELECT price FROM content WHERE name='"+s+"'");
-//    q1.next();
-//    double price=q1.value(0).toDouble();
-//    user.SetWallet(user.GetWallet()-price);
-
+    QSqlQuery q(QSqlDatabase::database("shop"));
+    q.exec("SELECT idcontent FROM content WHERE name='"+temp+"'");
+    q.next();
+    QString idcontent=q.value(0).toString();
+    QString iduser=QString::number(user.GetIdUser());
+    QSqlQuery q1(QSqlDatabase::database("shop"));
+    q1.exec("SELECT * FROM library WHERE idcontent="+idcontent+" AND iduser="+iduser);
+    q1.next();/// Почему-то тут не проходит дальше
+    qDebug()<<q1.lastQuery();
+    QString check=q1.value(0).toString();
+    if(check.isEmpty())
+    {
+        QMessageBox::information(this,check,"Вы купили это");
+        QSqlQuery q2(QSqlDatabase::database("shop"));
+        q2.exec("SELECT price FROM content WHERE name='"+temp+"'");
+        q2.next();
+        double price=q2.value(0).toDouble();
+        if(price<user.GetWallet())
+        {
+            QSqlQuery q3(QSqlDatabase::database("shop"));
+            user.SetWallet(user.GetWallet()-price);
+            q3.exec("INSERT INTO library (iduser,idcontent)VALUES('"+QString::number(user.GetIdUser())+"','"+idcontent+"')");
+            qDebug()<<q3.lastQuery();
+            q3.next();
+        }
+        else
+        {
+            QMessageBox::warning(this,"Wallet","Недостаточно средств!");
+        }
+    }
+    else
+    {
+        QMessageBox::information(this,"Product","У вас уже есть это");
+    }
+    user.SyncData();
 }
 void MainWindow::download_Button()
 {
