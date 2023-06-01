@@ -56,8 +56,10 @@ color: white;
 border: 1px solid;
 border-color: black;
 }
+QLabel {
+margin: 2%;
+}
 QLabel#image{
-border-radius:50%;
-border: 5px solid #fff;
-box-shadow: 2px 1px 5px #999999;
+border-radius:5%;
+border: 5px solid #1071FF;
 }
