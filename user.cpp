@@ -28,7 +28,20 @@ User::User(int id)
     }
 
 }
+void User::SyncData()
+{
+    QString q="UPDATE profile SET wallet="+QString::number(wallet)+" WHERE idprofile="+QString::number(id_profile);
+    QSqlQuery query(QSqlDatabase::database("shop"));
+    if (!query.exec(q))
+    {
+        qDebug()<<"Синхронизация не выполнена";
+    }
+}
 
+void User::SetWallet(double d)
+{
+    wallet=d;
+}
 int User::GetIdUser()
 {
     return id_user;
