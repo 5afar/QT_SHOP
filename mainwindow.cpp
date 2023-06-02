@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     a.exec();
     if(a.get_isAuth())
     {
@@ -22,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent)
     else
     {
         this->close();
+        QCoreApplication::quit();
     }
     User u (a.get_id());
     user=u;

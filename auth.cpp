@@ -9,6 +9,7 @@ Auth::Auth(QDialog *parent) :
     ui->setupUi(this);
     this->setWindowFlag(Qt::FramelessWindowHint);
 
+
 }
 
 Auth::~Auth()
