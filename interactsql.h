@@ -4,20 +4,20 @@
 
 #include "qsqldatabase.h"
 
-class interactsql
+class interactsql   /// Класс подключения к базе данных
 {
 private:
-    bool isConnected=false;
-    QSqlDatabase db;
+    bool isConnected=false;   /// Статус подключения
+    QSqlDatabase db;  /// Экземпляр базы данных
 
 
 public:
-    interactsql();
-    int userID;
-    bool get_isConnected();
-    bool get_Auth(bool isAuth,QString l,QString p);
-    int get_id();
-    QSqlQuery que(QString s);
+    interactsql(); /// Конструктор класса
+    int userID;  /// id пользователя
+    bool get_isConnected(); /// Функция проверки статуса подключения
+    bool get_Auth(bool isAuth,QString l,QString p);  /// Функция запроса данных авторизации из бд
+    int get_id(); /// Функция, которая возвращает id пользователя
+    QSqlQuery que(QString s);  /// Переменная запросов к бд  не используется в коде!!!!!!!!
 };
 
 #endif // INTERACTSQL_H

@@ -1,18 +1,18 @@
 #include "user.h"
 #include "qsqlquery.h"
 
-User::User()
+User::User()   /// Конструктор класса
 {
 
 }
-User::User(int id)
+User::User(int id)   /// Перегрузка конструктора для того чтобы можно было заполнить данные пользователя заранее
 {
 
-    QString q="SELECT * FROM profile WHERE iduser="+QString::number(id);
+    QString q="SELECT * FROM profile WHERE iduser="+QString::number(id); /// строка запроса
     QSqlQuery query(QSqlDatabase::database("shop"));
-    if (query.exec(q))
+    if (query.exec(q))  /// проверка выполнения запроса
     {
-        while (query.next())
+        while (query.next())   /// цикл заполнения данных пользователей
         {
             id_profile=query.value(0).toInt();
             id_user=query.value(1).toInt();
@@ -28,53 +28,53 @@ User::User(int id)
     }
 
 }
-void User::SyncData()
+void User::SyncData()    /// выгрузка данных из класса в бд
 {
-    QString q="UPDATE profile SET wallet="+QString::number(wallet)+" WHERE idprofile="+QString::number(id_profile);
+    QString q="UPDATE profile SET wallet="+QString::number(wallet)+" WHERE idprofile="+QString::number(id_profile); /// строка обновления данных
     QSqlQuery query(QSqlDatabase::database("shop"));
-    if (!query.exec(q))
+    if (!query.exec(q))  /// проверка запроса
     {
         qDebug()<<"Синхронизация не выполнена";
     }
 }
 
-void User::SetWallet(double d)
+void User::SetWallet(double d)   /// изменение баланса
 {
     wallet=d;
 }
-int User::GetIdUser()
+int User::GetIdUser()   /// Функция получения id пользователя
 {
     return id_user;
 }
-int User::GetIdProfile()
+int User::GetIdProfile()   /// Функция получения id профиля
 {
     return id_profile;
 }
-QString User::GetName()
+QString User::GetName()   /// Получение имени пользователя
 {
     return name;
 }
-QString User::GetSecondName()
+QString User::GetSecondName()   /// Получение фамилии пользователя
 {
     return second_name;
 }
-QDate User::GetBirthday()
+QDate User::GetBirthday()  /// получение даты рождения
 {
     return birthday;
 }
-QString User::GetEmail()
+QString User::GetEmail()   /// получение почты
 {
     return email;
 }
-QString User::GetControlQuestion()
+QString User::GetControlQuestion()  /// получение контрольного вопроса
 {
     return control_question;
 }
-QString User::GetControlAnswer()
+QString User::GetControlAnswer()   /// получение ответа на контрольный вопрос
 {
     return control_answer;
 }
-double User::GetWallet()
+double User::GetWallet()   /// получение баланса кошелька
 {
     return wallet;
 }

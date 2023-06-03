@@ -1,3 +1,4 @@
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -11,43 +12,43 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow  /// Класс главного окна
 {
     Q_OBJECT
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    bool get_isWorked();
-    void onAddWidget();
-    void onRemoveWidget();
+    bool get_isWorked();  ///Функция получения статуса приложения НАДО ДОДЕЛАТЬ СТАТУС В ФАЙЛЕ МЕЙН
+    void onAddWidget();   /// Функция добавления динамических виджетов виджета НАДО УБРАТЬ!!!!
+    void onRemoveWidget(); /// Функция удаления виджетов
 
 private slots:
 
-    void on_Exit_Button_clicked();
+    void on_Exit_Button_clicked();  /// Слот обработки кнопки выхода
 
-    void on_Shop_Button_clicked();
+    void on_Shop_Button_clicked(); /// Слот обработки кнопки магазина
 
-    void on_Library_Button_clicked();
+    void on_Library_Button_clicked();   /// Слот обработки кнопки библиотеки
 
-    void buy_Button();
-    void payment_Button();
-    void download_Button();
+    void buy_Button();   /// Слот обработки нажатия динамической кнопки покупки товара
+    void payment_Button();  /// Слот обработки динамической кнопки оплаты товара
+    void download_Button();   /// Слот обработки динамической кнопки скачивания из библиотеки
 
-    void on_Profile_Button_clicked();
+    void on_Profile_Button_clicked(); /// Обработка нажатия кнопки профиля
 
 private:
-    QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap;
-    QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap2;
-    interactsql sql;
-    bool isConnected=false;
+    QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap;  /// хеш карта для запоминания указателей на виджеты страницы покупки
+    QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap2;   /// хеш карта для запоминания указателей на виджеты страницы библиотеки
+    interactsql sql;   /// Экземпляр класса interactsql
+    bool isConnected=false;   /// статус подключения к бд
     QSqlDatabase db;
     Ui::MainWindow *ui;
-    bool isWorked = true;
-    bool isFull=false;
-    Auth a;
-    User user;
-    QString temp;
+    bool isWorked = true;  /// статус работы программы
+    bool isFull=false;  /// Статус переполнения окна виджетами НУЖНО УДАЛИТЬ!!!!!!!
+    Auth a;   /// Объект класса Auth
+    User user; /// Объект класса User
+    QString temp;   /// Строковая переменная для запоминания промежуточных строк
 
 
 };

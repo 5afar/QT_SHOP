@@ -13,19 +13,19 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    a.exec();
-    if(a.get_isAuth())
+    a.exec(); /// Запуск окна авторизации
+    if(a.get_isAuth()) /// проверка авторизации
     {
         this->setWindowFlag(Qt::FramelessWindowHint);
-        this->show();
+        this->show(); /// Запуск главного окна
     }
     else
     {
         this->close();
     }
-    User u (a.get_id());
+    User u (a.get_id()); /// Запрос данных пользователя с определенным id НАДО ДОРАБОТАТЬ!!!
     user=u;
-    on_Shop_Button_clicked();
+    on_Shop_Button_clicked();  /// Прогрузка страницы магазина в главном окне
 }
 MainWindow::~MainWindow()
 {
@@ -33,56 +33,56 @@ MainWindow::~MainWindow()
     isWorked = false;
     delete ui;
 }
-bool MainWindow::get_isWorked()
+bool MainWindow::get_isWorked()   /// Статус работы программы
 {
     return (isWorked);
 }
-void MainWindow::on_Exit_Button_clicked()
+void MainWindow::on_Exit_Button_clicked()  /// Обработка кнопки выхода из программы
 {
-    QCoreApplication::quit();
+    QCoreApplication::quit();   /// Завершение программы
     this->close();
 }
-void MainWindow::on_Shop_Button_clicked()
+void MainWindow::on_Shop_Button_clicked()   /// Обработка кнопки магазин
 {
 
-    onRemoveWidget();
+    onRemoveWidget();  /// Чистка виджетов
 
-    db.open();
-    QSqlQuery q1(QSqlDatabase::database("shop"));
+    db.open();  /// Открытие подключения (ВОзможно не нужно уже)!!!
+    QSqlQuery q1(QSqlDatabase::database("shop"));  /// Создание двух переменных для разных запросов
     QSqlQuery q2(QSqlDatabase::database("shop"));
-    q1.exec("SELECT idcontent, name, price FROM content");
+    q1.exec("SELECT idcontent, name, price FROM content"); /// Первый запрос в базу данных
 
-    QWidget *wid=new QWidget;
-    QVBoxLayout* lay=new QVBoxLayout(wid);
-    QScrollArea *sc = new QScrollArea;
-    sc->setWidget(wid);
+    QWidget *wid=new QWidget;   /// Создание динамического виджета
+    QVBoxLayout* lay=new QVBoxLayout(wid);  /// Динамический слой наследующийся от виджета
+    QScrollArea *sc = new QScrollArea;  /// Создание области прокрутки
+    sc->setWidget(wid); /// Установка зоны прокрутки внутри виджета
     sc->setWidgetResizable(true);
-    while(q1.next())
+    while(q1.next()) /// Обработка строк первого запроса бд
     {
-        QString idcontent=q1.value(0).toString();
-        q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'");
+        QString idcontent=q1.value(0).toString(); 
+        q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'"); /// Второй запрос в бд
         q2.next();
         isFull=true;
 
-        QWidget *element= new QWidget ();
-        QHBoxLayout* layout = new QHBoxLayout(element);
+        QWidget *element= new QWidget (); /// Динамический виджет, который содержит в себе информацию об одном товаре
+        QHBoxLayout* layout = new QHBoxLayout(element);  /// слой с горизонтальным выравниванием внутри виджета
 
-        QLabel* labelimg = new QLabel();
+        QLabel* labelimg = new QLabel();  /// Метка с встроенной картинкой
         labelimg->setObjectName("image");
         labelimg->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-        QPixmap pic = QPixmap(q2.value(0).toString());
-        QPixmap scaled = pic.scaled(720,405,Qt::KeepAspectRatio);
+        QPixmap pic = QPixmap(q2.value(0).toString()); /// Загрузка картинки по адресу на компьютере, который записан в бд
+        QPixmap scaled = pic.scaled(720,405,Qt::KeepAspectRatio); /// Установлене размеров изображения
         labelimg->setFixedWidth(720);
-        labelimg->setPixmap(scaled);
-        layout->addWidget(labelimg);
+        labelimg->setPixmap(scaled); 
+        layout->addWidget(labelimg); /// Добавления виджета в слой
 
-        QLabel* labelname = new QLabel();
+        QLabel* labelname = new QLabel(); /// Текстовая метка
         labelname->setText(q1.value(1).toString());
         labelname->setObjectName("game");
         labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelname);
 
-        QLabel* labelprice = new QLabel();
+        QLabel* labelprice = new QLabel();   /// Текстовая метка
         labelprice->setText(q1.value(2).toString());
         labelprice->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelprice);
@@ -90,40 +90,40 @@ void MainWindow::on_Shop_Button_clicked()
         QString buttonText ="Купить";
         QPushButton* button = new QPushButton(buttonText,this);
         button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-        QObject::connect(
+        QObject::connect(                               /// Обработка нажатий динамической кнопки
                     button, &QPushButton::clicked,
                     this, &MainWindow::buy_Button);
         layout->addWidget(button);
         lay->insertWidget(0,element);
-        mButtonToLayoutMap.insert(button,layout);
+        mButtonToLayoutMap.insert(button,layout);   /// Добавление записи в карту
     }
-    ui->widgets_frame1->addWidget(sc);
+    ui->widgets_frame1->addWidget(sc); /// Добавление общего виджета на экран
     lay->addStretch();
-    db.close();
+    db.close(); /// Закрытие бд ВОЗМОЖНО НЕ НУЖНО !!!!
 }
 
-void MainWindow::onRemoveWidget()
+void MainWindow::onRemoveWidget()   /// Функция удаления виджетов 
 {
 ///////// SSTEP 1
-    QList<QWidget*> children;
+    QList<QWidget*> children;  /// лист указателей на дочерние виджеты
     do
     {
-        children=ui->widgets_frame1->findChildren<QWidget*>();
-        if(children.count()==0)
+        children=ui->widgets_frame1->findChildren<QWidget*>(); /// поиск дочерних виджетов
+        if(children.count()==0) /// проверка наличия виджетов
             break;
-        delete children.at(0);
+        delete children.at(0);  /// удаления дочернего виджета
     }
     while(true);
 ///////////// SSTEP 2
-    if(ui->widgets_frame1->layout())
+    if(ui->widgets_frame1->layout()) /// Проверка наличия слоев
     {
-        QLayoutItem* item;
-        while((item= ui->widgets_frame1->layout()->takeAt(0))!=nullptr)
+        QLayoutItem* item;  /// Экземляр объекта слоя
+        while((item= ui->widgets_frame1->layout()->takeAt(0))!=nullptr) /// Пока присутствуют объекты происходит их удаление
             delete item;
     }
 }
 
-void MainWindow::on_Library_Button_clicked()
+void MainWindow::on_Library_Button_clicked()   /// Обработка нажатий на кнопку библиотека
 {
     onRemoveWidget();
 
@@ -131,7 +131,7 @@ void MainWindow::on_Library_Button_clicked()
     db.open();
     QString id=QString::number(a.get_id());
     QSqlQuery q1(QSqlDatabase::database("shop"));
-    q1.exec("SELECT name FROM library JOIN content ON library.idcontent=content.idcontent WHERE iduser='"+id+"'");
+    q1.exec("SELECT name FROM library JOIN content ON library.idcontent=content.idcontent WHERE iduser='"+id+"'"); /// Запрос к бд
 
     QWidget *wid=new QWidget;
     QVBoxLayout* lay=new QVBoxLayout(wid);
@@ -164,24 +164,24 @@ void MainWindow::on_Library_Button_clicked()
     db.close();
 }
 
-void MainWindow::buy_Button()
+void MainWindow::buy_Button()   /// Обработка нажатий на кнопку покупки товара
 {
-    QPushButton* button=qobject_cast<QPushButton*>(sender());
-    QHBoxLayout* layou=mButtonToLayoutMap.value(button);
+    QPushButton* button=qobject_cast<QPushButton*>(sender()); /// Отлавливание указателя на кнопку, которая отправила сигнал
+    QHBoxLayout* layou=mButtonToLayoutMap.value(button);   /// поиск в карте слоя, которому принадлежит эта кнопка
 
     QString s;
-    if (layou){
-        QLabel *label=qobject_cast<QLabel*>(layou->itemAt(1)->widget());
+    if (layou){   /// Проверка наличия слоя
+        QLabel *label=qobject_cast<QLabel*>(layou->itemAt(1)->widget()); /// Получение виджета из слоя с названием товара
         if (label){
-            s=label->text();
+            s=label->text(); /// Сохранение названия товара
         }
     }
-    temp=s;
-    onRemoveWidget();
+    temp=s;  /// Перенос во внешнюю переменную
+    onRemoveWidget(); /// Чистка виджетов
     db.open();
     QSqlQuery q1(QSqlDatabase::database("shop"));
     QSqlQuery q2(QSqlDatabase::database("shop"));
-    q1.exec("SELECT * FROM content WHERE name='"+s+"'");
+    q1.exec("SELECT * FROM content WHERE name='"+s+"'"); /// Строка запроса
 
     QWidget *wid=new QWidget;
     QVBoxLayout* lay=new QVBoxLayout(wid);
@@ -194,8 +194,8 @@ void MainWindow::buy_Button()
     while(q1.next())
     {
         idcontent=q1.value(0).toString();
-        q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'");
-        while(q2.next())
+        q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'"); /// Строка запроса картинок из бд
+        while(q2.next())  /// Цикл вывода изображение на экран
         {
             QLabel* labelimg = new QLabel();
             labelimg->setObjectName("image");
@@ -227,7 +227,7 @@ void MainWindow::buy_Button()
         QPushButton* button = new QPushButton(buttonText,this);
         button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         lay->addWidget(button);
-        QObject::connect(button,&QPushButton::clicked, this, &MainWindow::payment_Button);
+        QObject::connect(button,&QPushButton::clicked, this, &MainWindow::payment_Button); /// Сигнал нажатия кнопки оплаты
     }
 
     lay->addWidget(element);
@@ -237,30 +237,30 @@ void MainWindow::buy_Button()
 
 }
 
-void MainWindow::payment_Button()
+void MainWindow::payment_Button()  /// Обработка нажатий кнопки оплаты
 {
     QSqlQuery q(QSqlDatabase::database("shop"));
-    q.exec("SELECT idcontent FROM content WHERE name='"+temp+"'");
+    q.exec("SELECT idcontent FROM content WHERE name='"+temp+"'"); /// Получение id товара из бд по названию
     q.next();
     QString idcontent=q.value(0).toString();
-    QString iduser=QString::number(user.GetIdUser());
+    QString iduser=QString::number(user.GetIdUser()); /// Получение id пользователя
     QSqlQuery q1(QSqlDatabase::database("shop"));
-    q1.exec("SELECT * FROM library WHERE idcontent="+idcontent+" AND iduser="+iduser);
-    q1.next();/// Почему-то тут не проходит дальше
+    q1.exec("SELECT * FROM library WHERE idcontent="+idcontent+" AND iduser="+iduser); /// Проверка наличия товара в бибилотеке пользователя
+    q1.next();
     qDebug()<<q1.lastQuery();
-    QString check=q1.value(0).toString();
-    if(check.isEmpty())
+    QString check=q1.value(0).toString(); /// Присваивание записи к строке
+    if(check.isEmpty()) /// Проверка наличия
     {
         QMessageBox::information(this,check,"Вы купили это");
         QSqlQuery q2(QSqlDatabase::database("shop"));
         q2.exec("SELECT price FROM content WHERE name='"+temp+"'");
         q2.next();
         double price=q2.value(0).toDouble();
-        if(price<user.GetWallet())
+        if(price<user.GetWallet()) /// Проверка того, хватает ли пользователю средств на балансе для бриобретения
         {
             QSqlQuery q3(QSqlDatabase::database("shop"));
             user.SetWallet(user.GetWallet()-price);
-            q3.exec("INSERT INTO library (iduser,idcontent)VALUES('"+QString::number(user.GetIdUser())+"','"+idcontent+"')");
+            q3.exec("INSERT INTO library (iduser,idcontent)VALUES('"+QString::number(user.GetIdUser())+"','"+idcontent+"')");/// Добавление записи в базу данных
             qDebug()<<q3.lastQuery();
             q3.next();
         }
@@ -273,9 +273,9 @@ void MainWindow::payment_Button()
     {
         QMessageBox::information(this,"Product","У вас уже есть это");
     }
-    user.SyncData();
+    user.SyncData(); /// Обновление данных пользователя
 }
-void MainWindow::download_Button()
+void MainWindow::download_Button()  /// Обработка нажатий на кнопку скачать
 {
     onRemoveWidget();
 //    QPushButton* button=qobject_cast<QPushButton*>(sender());
@@ -290,7 +290,7 @@ void MainWindow::download_Button()
 }
 
 
-void MainWindow::on_Profile_Button_clicked()
+void MainWindow::on_Profile_Button_clicked() /// Обработка нажатий на кнопку профиль
 {
 
     onRemoveWidget();
