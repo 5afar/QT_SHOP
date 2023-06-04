@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
         QCoreApplication::quit();
         isWorked=false;
     }
+
+
 //    User u (a.get_id()); /// Запрос данных пользователя с определенным id
     user= new User(a.get_id());
     on_Shop_Button_clicked();  /// Прогрузка страницы магазина в главном окне

@@ -1,4 +1,5 @@
 #include "auth.h"
+#include "registration.h"
 #include "ui_auth.h"
 #include <QMessageBox>
 
@@ -41,5 +42,15 @@ void Auth::on_pushButton_2_clicked() /// Слот, который активируется при нажатии 
 int Auth::get_id()  /// Функция, которая возвращает id пользователя
 {
     return id;
+}
+void Auth::on_pushButton_3_clicked()
+{
+    Registration r;
+    r.exec();
+    reg=true;
+}
+bool Auth::get_reg()
+{
+    return reg;
 }
 

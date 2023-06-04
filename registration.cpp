@@ -1,8 +1,8 @@
 #include "registration.h"
 #include "ui_registration.h"
 
-Registration::Registration(QWidget *parent) :
-    QWidget(parent),
+Registration::Registration(QDialog *parent) :
+    QDialog(parent),
     ui(new Ui::Registration)
 {
     ui->setupUi(this);
@@ -13,3 +13,9 @@ Registration::~Registration()
 {
     delete ui;
 }
+
+void Registration::on_pushButton_cancel_clicked()
+{
+    this->close();
+}
+
