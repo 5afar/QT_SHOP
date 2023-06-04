@@ -142,6 +142,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="displayFormat">
+        <string>yyyy.MM.dd</string>
+       </property>
       </widget>
      </item>
      <item row="3" column="1">
@@ -194,7 +197,7 @@
       </spacer>
      </item>
      <item row="17" column="1">
-      <widget class="QLabel" name="label_10">
+      <widget class="QLabel" name="label_birthday">
        <property name="minimumSize">
         <size>
          <width>100</width>
@@ -202,7 +205,7 @@
         </size>
        </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string>Birthday</string>
        </property>
       </widget>
      </item>

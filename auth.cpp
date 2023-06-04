@@ -1,4 +1,5 @@
 #include "auth.h"
+#include "registration.h"
 #include "ui_auth.h"
 #include <QMessageBox>
 
@@ -8,8 +9,6 @@ Auth::Auth(QDialog *parent) :   /// Конструктор окна авторизации
 {
     ui->setupUi(this);
     this->setWindowFlag(Qt::FramelessWindowHint);
-
-
 }
 
 Auth::~Auth()
@@ -35,7 +34,6 @@ void Auth::on_pushButton_clicked()   /// Слот, который активируется при нажатии 
     }
 }
 
-
 void Auth::on_pushButton_2_clicked() /// Слот, который активируется при нажатии кнопки Выход
 {
     QCoreApplication::quit();
@@ -44,5 +42,15 @@ void Auth::on_pushButton_2_clicked() /// Слот, который активируется при нажатии 
 int Auth::get_id()  /// Функция, которая возвращает id пользователя
 {
     return id;
+}
+void Auth::on_pushButton_3_clicked()
+{
+    Registration r;
+    r.exec();
+    reg=true;
+}
+bool Auth::get_reg()
+{
+    return reg;
 }
 

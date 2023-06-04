@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QSqlQuery>
 
-
 interactsql::interactsql()
 { /*
   Строки подключения к базе данных
