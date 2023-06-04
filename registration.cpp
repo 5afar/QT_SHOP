@@ -1,0 +1,15 @@
+#include "registration.h"
+#include "ui_registration.h"
+
+Registration::Registration(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::Registration)
+{
+    ui->setupUi(this);
+    this->setWindowFlag(Qt::FramelessWindowHint);
+}
+
+Registration::~Registration()
+{
+    delete ui;
+}
