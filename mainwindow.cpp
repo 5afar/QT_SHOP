@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+
     a.exec(); /// Запуск окна авторизации
     if(a.get_isAuth()) /// проверка авторизации
+
     {
         this->setWindowFlag(Qt::FramelessWindowHint);
         this->show(); /// Запуск главного окна
@@ -22,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     else
     {
         this->close();
+        QCoreApplication::quit();
     }
     User u (a.get_id()); /// Запрос данных пользователя с определенным id НАДО ДОРАБОТАТЬ!!!
     user=u;

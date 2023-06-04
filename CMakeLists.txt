@@ -26,6 +26,9 @@ set(PROJECT_SOURCES
         qrc.qrc
         user.h
         user.cpp
+        registration.h
+        registration.cpp
+        registration.ui
 
 )
 
