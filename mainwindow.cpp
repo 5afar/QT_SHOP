@@ -12,11 +12,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-
     a.exec(); /// Запуск окна авторизации
     if(a.get_isAuth()) /// проверка авторизации
-
     {
         this->setWindowFlag(Qt::FramelessWindowHint);
         this->show(); /// Запуск главного окна
@@ -25,14 +22,14 @@ MainWindow::MainWindow(QWidget *parent)
     {
         this->close();
         QCoreApplication::quit();
+        isWorked=false;
     }
-    User u (a.get_id()); /// Запрос данных пользователя с определенным id НАДО ДОРАБОТАТЬ!!!
-    user=u;
+//    User u (a.get_id()); /// Запрос данных пользователя с определенным id
+    user= new User(a.get_id());
     on_Shop_Button_clicked();  /// Прогрузка страницы магазина в главном окне
 }
 MainWindow::~MainWindow()
 {
-
     isWorked = false;
     delete ui;
 }
@@ -47,9 +44,7 @@ void MainWindow::on_Exit_Button_clicked()  /// Обработка кнопки �
 }
 void MainWindow::on_Shop_Button_clicked()   /// Обработка кнопки магазин
 {
-
     onRemoveWidget();  /// Чистка виджетов
-
     db.open();  /// Открытие подключения (ВОзможно не нужно уже)!!!
     QSqlQuery q1(QSqlDatabase::database("shop"));  /// Создание двух переменных для разных запросов
     QSqlQuery q2(QSqlDatabase::database("shop"));
@@ -65,7 +60,6 @@ void MainWindow::on_Shop_Button_clicked()   /// Обработка кнопки 
         QString idcontent=q1.value(0).toString(); 
         q2.exec("SELECT link FROM content_img WHERE idcontent='"+idcontent+"'"); /// Второй запрос в бд
         q2.next();
-        isFull=true;
 
         QWidget *element= new QWidget (); /// Динамический виджет, который содержит в себе информацию об одном товаре
         QHBoxLayout* layout = new QHBoxLayout(element);  /// слой с горизонтальным выравниванием внутри виджета
@@ -129,8 +123,6 @@ void MainWindow::onRemoveWidget()   /// Функция удаления видж
 void MainWindow::on_Library_Button_clicked()   /// Обработка нажатий на кнопку библиотека
 {
     onRemoveWidget();
-
-
     db.open();
     QString id=QString::number(a.get_id());
     QSqlQuery q1(QSqlDatabase::database("shop"));
@@ -171,7 +163,6 @@ void MainWindow::buy_Button()   /// Обработка нажатий на кн�
 {
     QPushButton* button=qobject_cast<QPushButton*>(sender()); /// Отлавливание указателя на кнопку, которая отправила сигнал
     QHBoxLayout* layou=mButtonToLayoutMap.value(button);   /// поиск в карте слоя, которому принадлежит эта кнопка
-
     QString s;
     if (layou){   /// Проверка наличия слоя
         QLabel *label=qobject_cast<QLabel*>(layou->itemAt(1)->widget()); /// Получение виджета из слоя с названием товара
@@ -222,7 +213,7 @@ void MainWindow::buy_Button()   /// Обработка нажатий на кн�
         lay->addWidget(labelprice);
 
         QLabel* labelwallet = new QLabel();
-        labelwallet->setText("Ваш баланс: "+QString::number(user.GetWallet())+"руб.");
+        labelwallet->setText("Ваш баланс: "+QString::number(user->GetWallet())+"руб.");
         labelwallet->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         lay->addWidget(labelwallet);
 
@@ -232,21 +223,18 @@ void MainWindow::buy_Button()   /// Обработка нажатий на кн�
         lay->addWidget(button);
         QObject::connect(button,&QPushButton::clicked, this, &MainWindow::payment_Button); /// Сигнал нажатия кнопки оплаты
     }
-
     lay->addWidget(element);
     ui->widgets_frame1->addWidget(sc);
     lay->addStretch();
     db.close();
-
 }
-
 void MainWindow::payment_Button()  /// Обработка нажатий кнопки оплаты
 {
     QSqlQuery q(QSqlDatabase::database("shop"));
     q.exec("SELECT idcontent FROM content WHERE name='"+temp+"'"); /// Получение id товара из бд по названию
     q.next();
     QString idcontent=q.value(0).toString();
-    QString iduser=QString::number(user.GetIdUser()); /// Получение id пользователя
+    QString iduser=QString::number(user->GetIdUser()); /// Получение id пользователя
     QSqlQuery q1(QSqlDatabase::database("shop"));
     q1.exec("SELECT * FROM library WHERE idcontent="+idcontent+" AND iduser="+iduser); /// Проверка наличия товара в бибилотеке пользователя
     q1.next();
@@ -259,11 +247,11 @@ void MainWindow::payment_Button()  /// Обработка нажатий кно�
         q2.exec("SELECT price FROM content WHERE name='"+temp+"'");
         q2.next();
         double price=q2.value(0).toDouble();
-        if(price<user.GetWallet()) /// Проверка того, хватает ли пользователю средств на балансе для бриобретения
+        if(price<user->GetWallet()) /// Проверка того, хватает ли пользователю средств на балансе для бриобретения
         {
             QSqlQuery q3(QSqlDatabase::database("shop"));
-            user.SetWallet(user.GetWallet()-price);
-            q3.exec("INSERT INTO library (iduser,idcontent)VALUES('"+QString::number(user.GetIdUser())+"','"+idcontent+"')");/// Добавление записи в базу данных
+            user->SetWallet(user->GetWallet()-price);
+            q3.exec("INSERT INTO library (iduser,idcontent)VALUES('"+QString::number(user->GetIdUser())+"','"+idcontent+"')");/// Добавление записи в базу данных
             qDebug()<<q3.lastQuery();
             q3.next();
         }
@@ -276,7 +264,7 @@ void MainWindow::payment_Button()  /// Обработка нажатий кно�
     {
         QMessageBox::information(this,"Product","У вас уже есть это");
     }
-    user.SyncData(); /// Обновление данных пользователя
+    user->SyncData(); /// Обновление данных пользователя
 }
 void MainWindow::download_Button()  /// Обработка нажатий на кнопку скачать
 {
@@ -291,11 +279,8 @@ void MainWindow::download_Button()  /// Обработка нажатий на �
 //        }
 //    }
 }
-
-
 void MainWindow::on_Profile_Button_clicked() /// Обработка нажатий на кнопку профиль
 {
-
     onRemoveWidget();
     QWidget *wid=new QWidget;
     QVBoxLayout* lay=new QVBoxLayout(wid);
@@ -307,37 +292,37 @@ void MainWindow::on_Profile_Button_clicked() /// Обработка нажати
     QVBoxLayout* layout = new QVBoxLayout(element);
 
     QLabel* labelname = new QLabel();
-    labelname->setText(user.GetName());
+    labelname->setText(user->GetName());
     labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(labelname);
 
     QLabel* label_second_name = new QLabel();
-    label_second_name->setText(user.GetSecondName());
+    label_second_name->setText(user->GetSecondName());
     label_second_name->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_second_name);
 
     QLabel* label_Date = new QLabel();
-    label_Date->setText(user.GetBirthday().toString());
+    label_Date->setText(user->GetBirthday().toString());
     label_Date->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_Date);
 
     QLabel* label_email = new QLabel();
-    label_email->setText(user.GetEmail());
+    label_email->setText(user->GetEmail());
     label_email->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_email);
 
     QLabel* labelCQ = new QLabel();
-    labelCQ->setText(user.GetControlQuestion());
+    labelCQ->setText(user->GetControlQuestion());
     labelCQ->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(labelCQ);
 
     QLabel* labelAN = new QLabel();
-    labelAN->setText(user.GetControlAnswer());
+    labelAN->setText(user->GetControlAnswer());
     labelAN->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(labelAN);
 
     QLabel* label_wallet = new QLabel();
-    label_wallet->setText(QString::number(user.GetWallet()));
+    label_wallet->setText(QString::number(user->GetWallet()));
     label_wallet->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_wallet);
 
@@ -345,7 +330,5 @@ void MainWindow::on_Profile_Button_clicked() /// Обработка нажати
     lay->insertWidget(index,element);
     ui->widgets_frame1->addWidget(sc);
     lay->addStretch();
-
-
 }
 

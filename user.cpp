@@ -3,11 +3,9 @@
 
 User::User()   /// Конструктор класса
 {
-
 }
 User::User(int id)   /// Перегрузка конструктора для того чтобы можно было заполнить данные пользователя заранее
 {
-
     QString q="SELECT * FROM profile WHERE iduser="+QString::number(id); /// строка запроса
     QSqlQuery query(QSqlDatabase::database("shop"));
     if (query.exec(q))  /// проверка выполнения запроса
@@ -26,7 +24,6 @@ User::User(int id)   /// Перегрузка конструктора для т
             qDebug()<<id_profile<<id_user<<name<<second_name<<birthday<<email<<control_question<<control_answer<<wallet;
         }
     }
-
 }
 void User::SyncData()    /// выгрузка данных из класса в бд
 {

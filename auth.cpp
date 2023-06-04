@@ -8,8 +8,6 @@ Auth::Auth(QDialog *parent) :   /// Конструктор окна авторизации
 {
     ui->setupUi(this);
     this->setWindowFlag(Qt::FramelessWindowHint);
-
-
 }
 
 Auth::~Auth()
@@ -34,7 +32,6 @@ void Auth::on_pushButton_clicked()   /// Слот, который активируется при нажатии 
         ui->pushButton->setText("Try again!");
     }
 }
-
 
 void Auth::on_pushButton_2_clicked() /// Слот, который активируется при нажатии кнопки Выход
 {

@@ -19,8 +19,7 @@ class MainWindow : public QMainWindow  /// Класс главного окна
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    bool get_isWorked();  ///Функция получения статуса приложения НАДО ДОДЕЛАТЬ СТАТУС В ФАЙЛЕ МЕЙН
-    void onAddWidget();   /// Функция добавления динамических виджетов виджета НАДО УБРАТЬ!!!!
+    bool get_isWorked();  ///Функция получения статуса приложения
     void onRemoveWidget(); /// Функция удаления виджетов
 
 private slots:
@@ -45,9 +44,8 @@ private:
     QSqlDatabase db;
     Ui::MainWindow *ui;
     bool isWorked = true;  /// статус работы программы
-    bool isFull=false;  /// Статус переполнения окна виджетами НУЖНО УДАЛИТЬ!!!!!!!
     Auth a;   /// Объект класса Auth
-    User user; /// Объект класса User
+    User *user; /// Объект класса User
     QString temp;   /// Строковая переменная для запоминания промежуточных строк
 
 

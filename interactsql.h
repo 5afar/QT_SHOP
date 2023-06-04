@@ -17,7 +17,6 @@ public:
     bool get_isConnected(); /// Функция проверки статуса подключения
     bool get_Auth(bool isAuth,QString l,QString p);  /// Функция запроса данных авторизации из бд
     int get_id(); /// Функция, которая возвращает id пользователя
-    QSqlQuery que(QString s);  /// Переменная запросов к бд  не используется в коде!!!!!!!!
 };
 
 #endif // INTERACTSQL_H
