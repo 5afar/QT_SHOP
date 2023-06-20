@@ -36,6 +36,7 @@ set(PROJECT_SOURCES
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Sql)
+find_package(Qt6 REQUIRED COMPONENTS Network)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QT_SHOP
@@ -62,6 +63,7 @@ endif()
 
 target_link_libraries(QT_SHOP PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(QT_SHOP PRIVATE Qt6::Sql)
+target_link_libraries(QT_SHOP PRIVATE Qt6::Network)
 
 set_target_properties(QT_SHOP PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

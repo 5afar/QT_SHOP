@@ -8,6 +8,12 @@
 #include "user.h"
 #include <QMainWindow>
 #include <QFileDialog>
+#include <QFile>
+#include <QDialog>
+#include <QMessageBox>
+#include <QScrollArea>
+#include <QFileInfo>
+#include <QTcpSocket>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -39,6 +45,9 @@ private slots:
 
     void on_Profile_Button_clicked(); /// Обработка нажатия кнопки профиля
 
+public slots:
+    void slotReadyRead();
+
 private:
     QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap;  /// хеш карта для запоминания указателей на виджеты страницы покупки
     QHash<QPushButton*,QHBoxLayout*> mButtonToLayoutMap2;   /// хеш карта для запоминания указателей на виджеты страницы библиотеки
@@ -48,8 +57,13 @@ private:
     Ui::MainWindow *ui;
     bool isWorked = true;  /// статус работы программы
     Auth a;   /// Объект класса Auth
-
+    QTcpSocket *socket;
+    QByteArray Data;
+    quint32 nextBlockSize;
+    void SendToServer(QString str);
     QString temp;   /// Строковая переменная для запоминания промежуточных строк
+    void loadimg(QString str);
+    bool loading;
 
 
 };

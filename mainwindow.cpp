@@ -4,15 +4,18 @@
 #include "editprofile.h"
 #include "qlabel.h"
 #include "qsqlquery.h"
-#include <QDialog>
-#include <QMessageBox>
-#include <QScrollArea>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    socket=new QTcpSocket(this);
+    connect(socket,&QTcpSocket::readyRead,this,&MainWindow::slotReadyRead);
+    connect(socket,&QTcpSocket::disconnected,socket,&QTcpSocket::deleteLater);
+    nextBlockSize=0;
+    socket->connectToHost("192.168.0.2",2323);
     a.exec(); /// Запуск окна авторизации
     if(a.get_isAuth()) /// проверка авторизации
     {
@@ -30,10 +33,19 @@ MainWindow::MainWindow(QWidget *parent)
 //    User u (a.get_id()); /// Запрос данных пользователя с определенным id
     user= new User(a.get_id());
     on_Shop_Button_clicked();  /// Прогрузка страницы магазина в главном окне
+
+
 }
 MainWindow::~MainWindow()
 {
     isWorked = false;
+    QDir dir("temp/");
+    dir.setNameFilters(QStringList()<<"*.*");
+    dir.setFilter(QDir::Files);
+    foreach(QString dirFile,dir.entryList())
+    {
+        dir.remove(dirFile);
+    }
     delete ui;
 }
 bool MainWindow::get_isWorked()   /// Статус работы программы
@@ -45,8 +57,78 @@ void MainWindow::on_Exit_Button_clicked()  /// Обработка кнопки �
     QCoreApplication::quit();   /// Завершение программы
     this->close();
 }
+
+void MainWindow::SendToServer(QString str)
+{
+    Data.clear();
+    QDataStream out(&Data,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_6_4);
+    out<<(quint32)0<<str;
+    out.device()->seek(0);
+    out<<quint32(Data.size()-sizeof(quint32));
+    socket->write(Data);
+
+//    QMessageBox::information(this,"Запрос на сервер","SendToServer "+str);
+    nextBlockSize=0;
+}
+void MainWindow::loadimg(QString str)
+{
+    SendToServer(str);
+    loading=true;
+    while(loading)
+        socket->waitForReadyRead();
+}
+void MainWindow::slotReadyRead()
+{
+    QDir dir("temp/"+temp);
+    QDataStream in(socket);
+    in.setVersion(QDataStream::Qt_6_4);
+    if(in.status()==QDataStream::Ok)
+    {
+        for(;;)
+        {
+            if(nextBlockSize==0)
+            {
+                if(socket->bytesAvailable()<sizeof(quint32))
+                {
+//                    QMessageBox::warning(this,"ReadyRead","Data<2, break");
+                    return;
+                }
+                in>>nextBlockSize;
+            }
+            if(socket->bytesAvailable()<nextBlockSize)
+            {
+                qDebug()<<"Data not full";
+                return;
+            }
+            QString filename;
+            in>>filename;
+//            QMessageBox::information(this,"ReadyRead",filename);
+            QByteArray filedata;
+            filedata=socket->readAll();
+
+            QFile file(dir.path()+"1.png");
+
+//            QMessageBox::information(this,"ReadyRead",file.fileName());
+            if(!file.open(QIODevice::WriteOnly))
+            {
+                QMessageBox::warning(this,"ReadyRead","File not open");
+                return;
+            }
+            file.write(filedata);
+            file.close();
+            loading=false;
+//            QMessageBox::information(this,"ReadyRead","File write complete");
+            return;
+        }
+    }
+    else
+        QMessageBox::warning(this,"ReadyRead","in.status !Ok");
+}
+
 void MainWindow::on_Shop_Button_clicked()   /// Обработка кнопки магазин
 {
+
     onRemoveWidget();  /// Чистка виджетов
     db.open();  /// Открытие подключения (ВОзможно не нужно уже)!!!
     QSqlQuery q1(QSqlDatabase::database("shop"));  /// Создание двух переменных для разных запросов
@@ -66,11 +148,13 @@ void MainWindow::on_Shop_Button_clicked()   /// Обработка кнопки 
 
         QWidget *element= new QWidget (); /// Динамический виджет, который содержит в себе информацию об одном товаре
         QHBoxLayout* layout = new QHBoxLayout(element);  /// слой с горизонтальным выравниванием внутри виджета
-
+        temp=q1.value(1).toString();
+        QDir dir("temp/"+temp+"1.png");
         QLabel* labelimg = new QLabel();  /// Метка с встроенной картинкой
         labelimg->setObjectName("image");
         labelimg->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
-        QPixmap pic = QPixmap(q2.value(0).toString()); /// Загрузка картинки по адресу на компьютере, который записан в бд
+        loadimg(q2.value(0).toString());
+        QPixmap pic = QPixmap(dir.path()); /// Загрузка картинки по адресу на компьютере, который записан в бд
         QPixmap scaled = pic.scaled(720,405,Qt::KeepAspectRatio); /// Установлене размеров изображения
         labelimg->setFixedWidth(720);
         labelimg->setPixmap(scaled); 
