@@ -7,6 +7,7 @@
 #include "qboxlayout.h"
 #include "user.h"
 #include <QMainWindow>
+#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,6 +22,7 @@ public:
     ~MainWindow();
     bool get_isWorked();  ///Функция получения статуса приложения
     void onRemoveWidget(); /// Функция удаления виджетов
+    User *user; /// Объект класса User
 
 private slots:
 
@@ -33,6 +35,7 @@ private slots:
     void buy_Button();   /// Слот обработки нажатия динамической кнопки покупки товара
     void payment_Button();  /// Слот обработки динамической кнопки оплаты товара
     void download_Button();   /// Слот обработки динамической кнопки скачивания из библиотеки
+    void edit_Button();
 
     void on_Profile_Button_clicked(); /// Обработка нажатия кнопки профиля
 
@@ -45,7 +48,7 @@ private:
     Ui::MainWindow *ui;
     bool isWorked = true;  /// статус работы программы
     Auth a;   /// Объект класса Auth
-    User *user; /// Объект класса User
+
     QString temp;   /// Строковая переменная для запоминания промежуточных строк
 
 

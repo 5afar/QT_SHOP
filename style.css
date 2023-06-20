@@ -1,5 +1,5 @@
 QPushButton {
-  width:90px;
+  width:100px;
   text-align:center;
   font-family: System;
   text-decoration: none;
@@ -64,6 +64,15 @@ border-radius:5%;
 border: 5px solid #1071FF;
 }
 Registration{
+margin: 3rem;
+width: 350px;
+height: 250px;
+background: #ccc;
+color: white;
+border: 1px solid;
+border-color: black;
+}
+EditProfile{
 margin: 3rem;
 width: 350px;
 height: 250px;

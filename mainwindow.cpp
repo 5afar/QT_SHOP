@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "auth.h"
+#include "editprofile.h"
 #include "qlabel.h"
 #include "qsqlquery.h"
 #include <QDialog>
@@ -82,7 +83,7 @@ void MainWindow::on_Shop_Button_clicked()   /// Обработка кнопки 
         layout->addWidget(labelname);
 
         QLabel* labelprice = new QLabel();   /// Текстовая метка
-        labelprice->setText(q1.value(2).toString());
+        labelprice->setText(q1.value(2).toString()+"руб.");
         labelprice->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelprice);
 
@@ -144,6 +145,7 @@ void MainWindow::on_Library_Button_clicked()   /// Обработка нажат
         labelname->setText(q1.value(0).toString());
         labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
         layout->addWidget(labelname);
+
 
         QString buttonText ="Скачать";
         QPushButton* button = new QPushButton(buttonText,this);
@@ -270,16 +272,19 @@ void MainWindow::payment_Button()  /// Обработка нажатий кно�
 }
 void MainWindow::download_Button()  /// Обработка нажатий на кнопку скачать
 {
-    onRemoveWidget();
-//    QPushButton* button=qobject_cast<QPushButton*>(sender());
-//    QHBoxLayout* layout=mButtonToLayoutMap2.value(button);
-//    if (layout){
-//        QLabel *label=qobject_cast<QLabel*>(layout->itemAt(0)->widget());
-//        if (label){
-//            QString s=label->text();
-//            QMessageBox::question(this,"buy","Вы хотите скачать "+s+"?");
-//        }
-//    }
+    QPushButton* button=qobject_cast<QPushButton*>(sender()); /// Отлавливание указателя на кнопку, которая отправила сигнал
+    QHBoxLayout* layou=mButtonToLayoutMap2.value(button);   /// поиск в карте слоя, которому принадлежит эта кнопка
+    QString s;
+    if (layou){   /// Проверка наличия слоя
+        QLabel *label=qobject_cast<QLabel*>(layou->itemAt(0)->widget()); /// Получение виджета из слоя с названием товара
+        if (label){
+            s=label->text(); /// Сохранение названия товара
+        }
+    }
+    temp=s;  /// Перенос во внешнюю переменную
+    QString destinationPath = QFileDialog::getExistingDirectory(this,tr("Open Directory"),"C:\\", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString serverPath;
+    QMessageBox::information(this,"Path",destinationPath);
 }
 void MainWindow::on_Profile_Button_clicked() /// Обработка нажатий на кнопку профиль
 {
@@ -294,43 +299,55 @@ void MainWindow::on_Profile_Button_clicked() /// Обработка нажати
     QVBoxLayout* layout = new QVBoxLayout(element);
 
     QLabel* labelname = new QLabel();
-    labelname->setText(user->GetName());
+    labelname->setText("Имя: "+user->GetName());
     labelname->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(labelname);
 
     QLabel* label_second_name = new QLabel();
-    label_second_name->setText(user->GetSecondName());
+    label_second_name->setText("Фамилия: "+user->GetSecondName());
     label_second_name->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_second_name);
 
     QLabel* label_Date = new QLabel();
-    label_Date->setText(user->GetBirthday().toString());
+    label_Date->setText("Дата рождения: "+user->GetBirthday().toString());
     label_Date->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_Date);
 
     QLabel* label_email = new QLabel();
-    label_email->setText(user->GetEmail());
+    label_email->setText("Эл.почта: "+user->GetEmail());
     label_email->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_email);
 
     QLabel* labelCQ = new QLabel();
-    labelCQ->setText(user->GetControlQuestion());
+    labelCQ->setText("Контрольный вопрос: "+user->GetControlQuestion());
     labelCQ->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(labelCQ);
 
     QLabel* labelAN = new QLabel();
-    labelAN->setText(user->GetControlAnswer());
+    labelAN->setText("Контрольный ответ: "+user->GetControlAnswer());
     labelAN->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(labelAN);
 
     QLabel* label_wallet = new QLabel();
-    label_wallet->setText(QString::number(user->GetWallet()));
+    label_wallet->setText("Баланс: "+QString::number(user->GetWallet()));
     label_wallet->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
     layout->addWidget(label_wallet);
+
+    QString buttonText ="Редактировать";
+    QPushButton* button = new QPushButton(buttonText,this);
+    button->setSizePolicy(QSizePolicy::QSizePolicy::Maximum,QSizePolicy::Maximum);
+    layout->addWidget(button);
+    QObject::connect(button,&QPushButton::clicked, this, &MainWindow::edit_Button);
 
     int index = lay->count();
     lay->insertWidget(index,element);
     ui->widgets_frame1->addWidget(sc);
     lay->addStretch();
+}
+void MainWindow::edit_Button()
+{
+    EditProfile ep;
+    ep.exec();
+    user->SyncData();
 }
 

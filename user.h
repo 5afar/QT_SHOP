@@ -17,6 +17,12 @@ public:
     QString GetEmail();   /// получение почты
     QString GetControlQuestion();   /// получение контрольного вопроса
     QString GetControlAnswer();   /// получение ответа на контрольный вопрос
+    void SetName(QString str);   /// «апись имени пользовател€
+    void SetSecondName(QString str);   /// «апись фамилии пользовател€
+    void SetBirthday(QDate str);   /// «апись даты рождени€
+    void SetEmail(QString str);   /// «апись почты
+    void SetControlQuestion(QString str);   /// «апись контрольного вопроса
+    void SetControlAnswer(QString str);   /// «апись ответа на контрольный вопрос
     double GetWallet();   /// получение баланса кошелька
     void SyncData();  /// выгрузка данных из класса в бд
     void SetWallet(double d);   /// изменение баланса

@@ -29,6 +29,9 @@ set(PROJECT_SOURCES
         registration.h
         registration.cpp
         registration.ui
+        editprofile.h
+        editprofile.cpp
+        editprofile.ui
 
 )
 

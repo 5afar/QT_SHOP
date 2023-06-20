@@ -71,6 +71,36 @@ QString User::GetControlAnswer()   /// получение ответа на ко
 {
     return control_answer;
 }
+
+void User::SetName(QString str)
+{
+    name=str;
+}
+
+void User::SetSecondName(QString str)
+{
+    second_name=str;
+}
+
+void User::SetBirthday(QDate str)
+{
+    birthday=str;
+}
+
+void User::SetEmail(QString str)
+{
+    email=str;
+}
+
+void User::SetControlQuestion(QString str)
+{
+    control_question=str;
+}
+
+void User::SetControlAnswer(QString str)
+{
+    control_answer=str;
+}
 double User::GetWallet()   /// получение баланса кошелька
 {
     return wallet;
